@@ -16,17 +16,22 @@ const initialData: FormData = {
   demand: ""
 };
 
-export function ContactForm() {
+type ContactFormProps = {
+  locale: "zh" | "en";
+};
+
+export function ContactForm({ locale }: ContactFormProps) {
+  const t = locale === "zh";
   const [data, setData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [submitted, setSubmitted] = useState(false);
 
   function validate() {
     const nextErrors: Partial<FormData> = {};
-    if (!data.name.trim()) nextErrors.name = "请输入姓名";
-    if (!data.company.trim()) nextErrors.company = "请输入公司名称";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) nextErrors.email = "请输入有效邮箱";
-    if (data.demand.trim().length < 10) nextErrors.demand = "请至少输入 10 个字描述需求";
+    if (!data.name.trim()) nextErrors.name = t ? "请输入姓名" : "Please enter your name";
+    if (!data.company.trim()) nextErrors.company = t ? "请输入公司名称" : "Please enter your company";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) nextErrors.email = t ? "请输入有效邮箱" : "Please enter a valid email";
+    if (data.demand.trim().length < 10) nextErrors.demand = t ? "请至少输入 10 个字描述需求" : "Please enter at least 10 characters";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   }
@@ -44,7 +49,7 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="panel space-y-5">
       <div>
         <label htmlFor="name" className="mb-1 block text-sm text-slate-300">
-          姓名
+          {t ? "姓名" : "Name"}
         </label>
         <input
           id="name"
@@ -57,7 +62,7 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="company" className="mb-1 block text-sm text-slate-300">
-          公司
+          {t ? "公司" : "Company"}
         </label>
         <input
           id="company"
@@ -70,7 +75,7 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="email" className="mb-1 block text-sm text-slate-300">
-          邮箱
+          {t ? "邮箱" : "Email"}
         </label>
         <input
           id="email"
@@ -84,7 +89,7 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="demand" className="mb-1 block text-sm text-slate-300">
-          需求描述
+          {t ? "需求描述" : "Requirement"}
         </label>
         <textarea
           id="demand"
@@ -97,10 +102,12 @@ export function ContactForm() {
       </div>
 
       <button type="submit" className="rounded-lg bg-cyan-400 px-5 py-2 text-sm font-semibold text-brand-950">
-        提交咨询
+        {t ? "提交咨询" : "Submit"}
       </button>
 
-      {submitted ? <p className="text-sm text-emerald-300">提交成功，我们将尽快与您联系。</p> : null}
+      {submitted ? (
+        <p className="text-sm text-emerald-300">{t ? "提交成功，我们将尽快与您联系。" : "Submitted successfully. We will contact you soon."}</p>
+      ) : null}
     </form>
   );
 }
